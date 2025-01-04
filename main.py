@@ -1,6 +1,9 @@
 import curses
 import random
 from curses import wrapper
+import importlib.util
+import sys
+import os
 
 def draw_borders(stdscr):
     h, w = stdscr.getmaxyx()
@@ -98,15 +101,55 @@ def game_loop(stdscr):
         if (player_y, player_x) in bushes:
             player_y, player_x = old_y, old_x
 
+def load_level(level_number):
+    try:
+        level_path = f"lvl-{level_number}.py"
+        if not os.path.exists(level_path):
+            return None
+        spec = importlib.util.spec_from_file_location(f"level{level_number}", level_path)
+        level = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(level)
+        return level.Level
+    except Exception as e:
+        print(f"Error loading level: {e}")
+        return None
+
 def main(stdscr):
+    # Initialize colors
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+    curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLACK)
+    
+    current_level = 1
+    game_state = 'MENU'
+    
     while True:
-        action = show_menu(stdscr)
-        if action == 'QUIT':
-            break
-        elif action in ['START', 'RESTART']:
-            result = game_loop(stdscr)
+        if game_state == 'MENU':
+            action = show_menu(stdscr)
+            if action == 'QUIT':
+                break
+            elif action in ['START', 'RESTART']:
+                current_level = 1
+                game_state = 'PLAYING'
+                continue
+        
+        if game_state == 'PLAYING':
+            level_class = load_level(current_level)
+            if not level_class:
+                game_state = 'MENU'
+                continue
+            
+            level = level_class(stdscr)
+            result = level.run()
+            
             if result == 'QUIT':
                 break
+            elif result == 'NEXT_LEVEL':
+                current_level += 1
+                continue  # Stay in PLAYING state
+            elif result == 'RESTART':
+                game_state = 'MENU'  # Go back to menu only on explicit restart
 
 if __name__ == '__main__':
     wrapper(main)
