@@ -92,13 +92,14 @@ class Level:
                 key = self.stdscr.getch()
                 old_y, old_x = self.player_y, self.player_x
                 
-                if key == ord('w') and self.player_y > 1:
+                # Update movement controls to include arrows
+                if (key == ord('w') or key == curses.KEY_UP) and self.player_y > 1:
                     self.player_y -= 1
-                elif key == ord('s') and self.player_y < self.h - 3:
+                elif (key == ord('s') or key == curses.KEY_DOWN) and self.player_y < self.h - 3:
                     self.player_y += 1
-                elif key == ord('a') and self.player_x > 1:
+                elif (key == ord('a') or key == curses.KEY_LEFT) and self.player_x > 1:
                     self.player_x -= 1
-                elif key == ord('d') and self.player_x < self.w - 3:
+                elif (key == ord('d') or key == curses.KEY_RIGHT) and self.player_x < self.w - 3:
                     self.player_x += 1
                 elif key == ord('q'):
                     return 'QUIT'

@@ -23,8 +23,8 @@ def show_menu(stdscr):
     h, w = stdscr.getmaxyx()
     menu_text = [
         "Welcome to the Game!",
+        "Use WASD or Arrow Keys to move",
         "Press 'S' to Start",
-        "Press 'R' to Restart",
         "Press 'Q' to Quit"
     ]
     
@@ -40,8 +40,6 @@ def show_menu(stdscr):
             return 'QUIT'
         elif key in [ord('s'), ord('S')]:
             return 'START'
-        elif key in [ord('r'), ord('R')]:
-            return 'RESTART'
 
 def game_loop(stdscr):
     # Initialize colors
@@ -114,6 +112,62 @@ def load_level(level_number):
         print(f"Error loading level: {e}")
         return None
 
+def show_end_credits(stdscr):
+    curses.init_pair(4, curses.COLOR_RED, curses.COLOR_BLACK)
+    curses.init_pair(5, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
+    curses.init_pair(6, curses.COLOR_CYAN, curses.COLOR_BLACK)
+    
+    congratulations = [
+        "╔═══════════════════════════════════╗",
+        "║     🌟 CONGRATULATIONS! 🌟       ║",
+        "║    You completed all levels!      ║",
+        "╚═══════════════════════════════════╝"
+    ]
+    
+    credits = [
+        "Made by:",
+        "Github: Gardo32",
+        "",
+        "Press any key to exit"
+    ]
+    
+    colors = [4, 5, 6, 2, 3]  # Rotating colors
+    frame = 0
+    
+    while True:
+        stdscr.clear()
+        h, w = stdscr.getmaxyx()
+        
+        # Draw stars in background
+        for i in range(20):
+            y = random.randint(0, h-1)
+            x = random.randint(0, w-1)
+            stdscr.addch(y, x, '*', curses.color_pair(frame % 3 + 4) | curses.A_BOLD)
+        
+        # Draw congratulations text
+        for idx, line in enumerate(congratulations):
+            y = h//2 - 4 + idx
+            x = w//2 - len(line)//2
+            stdscr.addstr(y, x, line, curses.color_pair(frame % 3 + 4) | curses.A_BOLD)
+        
+        # Draw credits
+        for idx, line in enumerate(credits):
+            y = h//2 + 2 + idx
+            x = w//2 - len(line)//2
+            color = colors[frame % len(colors)]
+            stdscr.addstr(y, x, line, curses.color_pair(color) | curses.A_BOLD)
+        
+        stdscr.refresh()
+        frame += 1
+        
+        # Check for key press with timeout
+        stdscr.timeout(100)
+        key = stdscr.getch()
+        if key != -1:
+            break
+    
+    stdscr.timeout(-1)  # Reset timeout
+
 def main(stdscr):
     # Initialize colors
     curses.start_color()
@@ -137,8 +191,8 @@ def main(stdscr):
         if game_state == 'PLAYING':
             level_class = load_level(current_level)
             if not level_class:
-                game_state = 'MENU'
-                continue
+                show_end_credits(stdscr)
+                break
             
             level = level_class(stdscr)
             result = level.run()
