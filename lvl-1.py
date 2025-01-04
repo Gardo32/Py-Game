@@ -2,7 +2,7 @@ import curses
 import random
 
 class Level:
-    def __init__(self, stdscr):
+    def __init__(self, stdscr, player_name="Player"):
         self.stdscr = stdscr
         self.init_colors()
         curses.curs_set(0)
@@ -17,6 +17,7 @@ class Level:
         self.generate_path()
         self.bushes = self.create_bushes()
         self.blocking_bushes = self.place_blocking_bushes()
+        self.player_name = player_name
 
     def init_colors(self):
         curses.start_color()
@@ -126,8 +127,8 @@ class Level:
                 self.stdscr.clear()
                 self.draw_borders()
                 
-                # Draw level number in top-left corner
-                self.stdscr.addstr(1, 2, f"Level {self.level_number}", 
+                # Draw level number and player name in top-left corner
+                self.stdscr.addstr(1, 2, f"Level {self.level_number} - {self.player_name}", 
                                 curses.color_pair(2) | curses.A_BOLD)
                 
                 self.draw_entrance()  # Draw entrance before other elements

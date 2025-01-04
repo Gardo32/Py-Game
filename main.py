@@ -40,6 +40,8 @@ def show_menu(stdscr):
             return 'QUIT'
         elif key in [ord('s'), ord('S')]:
             return 'START'
+        elif key == 16:  # Ctrl+P (ASCII 16)
+            return 'SECRET_CREDITS'
 
 def game_loop(stdscr):
     # Initialize colors
@@ -112,16 +114,35 @@ def load_level(level_number):
         print(f"Error loading level: {e}")
         return None
 
-def show_end_credits(stdscr):
+def show_end_credits(stdscr, player_name):  # Add player_name parameter
     curses.init_pair(4, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(5, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
     curses.init_pair(6, curses.COLOR_CYAN, curses.COLOR_BLACK)
     
+    # Calculate box width based on player name length
+    name_length = len(player_name)
+    min_width = 35
+    width = max(min_width, name_length + 30)  # Ensure minimum width plus padding
+    
+    border_top = "╔" + "═" * (width - 2) + "╗"
+    border_bottom = "╚" + "═" * (width - 2) + "╝"
+    empty_line = "║" + " " * (width - 2) + "║"
+    
+    # Create centered congratulations message
+    congrats_text = f"🌟 CONGRATULATIONS {player_name}! 🌟"
+    padding = (width - 2 - len(congrats_text)) // 2
+    congrats_line = "║" + " " * padding + congrats_text + " " * (width - 2 - padding - len(congrats_text)) + "║"
+    
+    # Create centered completion message
+    complete_text = "You completed all levels!"
+    padding = (width - 2 - len(complete_text)) // 2
+    complete_line = "║" + " " * padding + complete_text + " " * (width - 2 - padding - len(complete_text)) + "║"
+    
     congratulations = [
-        "╔═══════════════════════════════════╗",
-        "║     🌟 CONGRATULATIONS! 🌟       ║",
-        "║    You completed all levels!      ║",
-        "╚═══════════════════════════════════╝"
+        border_top,
+        congrats_line,
+        complete_line,
+        border_bottom
     ]
     
     credits = [
@@ -138,24 +159,35 @@ def show_end_credits(stdscr):
         stdscr.clear()
         h, w = stdscr.getmaxyx()
         
-        # Draw stars in background
-        for i in range(20):
-            y = random.randint(0, h-1)
-            x = random.randint(0, w-1)
-            stdscr.addch(y, x, '*', curses.color_pair(frame % 3 + 4) | curses.A_BOLD)
-        
-        # Draw congratulations text
-        for idx, line in enumerate(congratulations):
-            y = h//2 - 4 + idx
-            x = w//2 - len(line)//2
-            stdscr.addstr(y, x, line, curses.color_pair(frame % 3 + 4) | curses.A_BOLD)
-        
-        # Draw credits
-        for idx, line in enumerate(credits):
-            y = h//2 + 2 + idx
-            x = w//2 - len(line)//2
-            color = colors[frame % len(colors)]
-            stdscr.addstr(y, x, line, curses.color_pair(color) | curses.A_BOLD)
+        # Draw stars in background with boundary checking
+        try:
+            for i in range(20):
+                y = random.randint(1, h-2)  # Avoid borders
+                x = random.randint(1, w-2)  # Avoid borders
+                try:
+                    stdscr.addch(y, x, '*', curses.color_pair(frame % 3 + 4) | curses.A_BOLD)
+                except curses.error:
+                    continue  # Skip if star can't be placed
+            
+            # Draw congratulations text with centering and boundary checks
+            for idx, line in enumerate(congratulations):
+                y = max(1, min(h-2, h//2 - 4 + idx))  # Keep within bounds
+                x = max(1, min(w-len(line)-1, w//2 - len(line)//2))
+                try:
+                    stdscr.addstr(y, x, line, curses.color_pair(frame % 3 + 4) | curses.A_BOLD)
+                except curses.error:
+                    continue
+            
+            # Draw credits with boundary checks
+            for idx, line in enumerate(credits):
+                y = max(1, min(h-2, h//2 + 2 + idx))
+                x = max(1, min(w-len(line)-1, w//2 - len(line)//2))
+                try:
+                    stdscr.addstr(y, x, line, curses.color_pair(colors[frame % len(colors)]) | curses.A_BOLD)
+                except curses.error:
+                    continue
+        except curses.error:
+            pass  # Handle any remaining drawing errors
         
         stdscr.refresh()
         frame += 1
@@ -168,6 +200,34 @@ def show_end_credits(stdscr):
     
     stdscr.timeout(-1)  # Reset timeout
 
+def get_player_name(stdscr):
+    stdscr.clear()
+    h, w = stdscr.getmaxyx()
+    prompt = "Enter your name: "
+    stdscr.addstr(h//2, w//2 - len(prompt)//2, prompt)
+    curses.echo()  # Show typing
+    curses.curs_set(1)  # Show cursor
+    name = ""
+    while True:
+        try:
+            y = h//2
+            x = w//2 - len(prompt)//2 + len(prompt)
+            stdscr.addstr(y, x, " " * 20)  # Clear previous name
+            stdscr.addstr(y, x, name)
+            char = stdscr.getch()
+            if char == ord('\n'):
+                break
+            elif char == ord('\b') or char == 127:  # Backspace
+                name = name[:-1]
+            elif len(name) < 20:  # Limit name length
+                name += chr(char)
+        except curses.error:
+            pass
+    
+    curses.noecho()
+    curses.curs_set(0)
+    return name.strip()
+
 def main(stdscr):
     # Initialize colors
     curses.start_color()
@@ -177,24 +237,31 @@ def main(stdscr):
     
     current_level = 1
     game_state = 'MENU'
+    player_name = ""
     
     while True:
         if game_state == 'MENU':
             action = show_menu(stdscr)
             if action == 'QUIT':
                 break
-            elif action in ['START', 'RESTART']:
+            elif action == 'START':
+                player_name = get_player_name(stdscr)
+                if not player_name:
+                    player_name = "Player"
                 current_level = 1
                 game_state = 'PLAYING'
                 continue
+            elif action == 'SECRET_CREDITS':  # Changed to use player's default name
+                show_end_credits(stdscr, "Player")  # Use same default name as normal gameplay
+                break
         
         if game_state == 'PLAYING':
             level_class = load_level(current_level)
             if not level_class:
-                show_end_credits(stdscr)
+                show_end_credits(stdscr, player_name)  # Pass player name to end credits
                 break
             
-            level = level_class(stdscr)
+            level = level_class(stdscr, player_name)  # Pass player name to level
             result = level.run()
             
             if result == 'QUIT':
