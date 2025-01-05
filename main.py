@@ -40,8 +40,8 @@ def show_menu(stdscr):
             return 'QUIT'
         elif key in [ord('s'), ord('S')]:
             return 'START'
-        elif key == 16:  # Ctrl+P (ASCII 16)
-            return 'SECRET_CREDITS'
+        elif key == 16:  # Ctrl+P
+            return 'REMOVE_BUSHES'  # Changed from 'SECRET_CREDITS'
 
 def game_loop(stdscr):
     # Initialize colors
@@ -97,6 +97,8 @@ def game_loop(stdscr):
             return 'QUIT'
         elif key == ord('r'):
             return 'RESTART'
+        elif key == 16:  # Ctrl+P - Remove special bushes cheat
+            bushes = []  # Clear all special bushes
             
         if (player_y, player_x) in bushes:
             player_y, player_x = old_y, old_x
@@ -238,6 +240,7 @@ def main(stdscr):
     current_level = 1
     game_state = 'MENU'
     player_name = ""
+    level = None  # Keep track of current level instance
     
     while True:
         if game_state == 'MENU':
@@ -251,26 +254,31 @@ def main(stdscr):
                 current_level = 1
                 game_state = 'PLAYING'
                 continue
-            elif action == 'SECRET_CREDITS':  # Changed to use player's default name
-                show_end_credits(stdscr, "Player")  # Use same default name as normal gameplay
-                break
+            elif action == 'REMOVE_BUSHES':
+                if level:  # If level exists, remove all blocking bushes
+                    level.blocking_bushes = []
+                continue
         
         if game_state == 'PLAYING':
             level_class = load_level(current_level)
             if not level_class:
-                show_end_credits(stdscr, player_name)  # Pass player name to end credits
+                show_end_credits(stdscr, player_name)
                 break
             
-            level = level_class(stdscr, player_name)  # Pass player name to level
-            result = level.run()
-            
-            if result == 'QUIT':
-                break
-            elif result == 'NEXT_LEVEL':
-                current_level += 1
-                continue  # Stay in PLAYING state
-            elif result == 'RESTART':
-                game_state = 'MENU'  # Go back to menu only on explicit restart
+            level = level_class(stdscr, player_name)
+            while True:
+                result = level.run()
+                if result == 'QUIT':
+                    game_state = 'MENU'
+                    break
+                elif result == 'NEXT_LEVEL':
+                    current_level += 1
+                    break
+                elif result == 'RESTART':
+                    game_state = 'MENU'
+                    break
+                elif result == 'REMOVE_BUSHES':  # Handle bush removal
+                    level.blocking_bushes = []
 
 if __name__ == '__main__':
     wrapper(main)

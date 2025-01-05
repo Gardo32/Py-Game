@@ -18,6 +18,10 @@ class Level:
         self.bushes = self.create_bushes()
         self.blocking_bushes = self.place_blocking_bushes()
         self.player_name = player_name
+        self.bush_questions = {
+            "Print 'HW' to break the bush": "print('HW')",
+        }
+        self.bush_count = 0  # Track which bush is being broken
 
     def init_colors(self):
         curses.start_color()
@@ -68,15 +72,40 @@ class Level:
             if (y+1, x) not in self.path_tiles:
                 self.wall_tiles.add((y+1, x))
 
+    def manhattan_distance(self, pos1, pos2):
+        return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
+
+    def is_valid_bush_position(self, pos, existing_bushes, min_distance=4):
+        # Check distance from entrance
+        if abs(pos[0] - self.entrance_y) <= 2 and abs(pos[1] - self.entrance_x) <= 2:
+            return False
+            
+        # Check distance from other bushes (must be at least min_distance away)
+        for bush in existing_bushes:
+            if self.manhattan_distance(pos, bush["pos"]) < min_distance:
+                return False
+                
+        return True
+
     def place_blocking_bushes(self):
-        blocking_bushes = set()
-        path_list = list(self.path_tiles)
-        # Place 5 bushes randomly along the path
-        for _ in range(5):
-            if path_list:
-                pos = random.choice(path_list)
-                blocking_bushes.add(pos)
-                path_list.remove(pos)
+        blocking_bushes = []
+        # Get path points excluding spawn area
+        path_points = [(y, x) for y, x in self.path_tiles 
+                      if self.manhattan_distance((y, x), (self.player_y, self.player_x)) > 4]
+        
+        # Sort path points by distance from start
+        path_points.sort(key=lambda pos: self.manhattan_distance(pos, (self.player_y, self.player_x)))
+        
+        # Try to place bushes ensuring minimum random distance
+        bush_number = 1
+        for pos in path_points:
+            min_distance = random.randint(10, 20)  # Changed range to 10-20 blocks
+            if self.is_valid_bush_position(pos, blocking_bushes, min_distance):
+                blocking_bushes.append({"pos": pos, "number": bush_number})
+                bush_number += 1
+                if bush_number > 5:  # Stop after placing 5 bushes
+                    break
+                    
         return blocking_bushes
 
     def create_bushes(self):
@@ -121,34 +150,45 @@ class Level:
         except curses.error:
             pass  # Safely handle any drawing errors
 
+    def try_break_bush(self, pos):
+        from editor import Editor
+        # Find the bush number for this position
+        for bush in self.blocking_bushes:
+            if bush["pos"] == pos:
+                bush_id = f"bush{bush['number']}"
+                editor = Editor(self.stdscr, 1, bush_id)
+                return editor.run()
+        return False
+
     def run(self):
         while True:
             try:
                 self.stdscr.clear()
                 self.draw_borders()
                 
-                # Draw level number and player name in top-left corner
-                self.stdscr.addstr(1, 2, f"Level {self.level_number} - {self.player_name}", 
-                                curses.color_pair(2) | curses.A_BOLD)
-                
-                self.draw_entrance()  # Draw entrance before other elements
-                
-                # Draw bushes
-                for bush_y, bush_x in self.bushes:
-                    self.stdscr.addch(bush_y, bush_x, '*', 
-                                    curses.color_pair(1) | curses.A_BOLD)
-                
-                # Draw walls
+                # Draw walls first
                 for y, x in self.wall_tiles:
                     if 0 < y < self.h-1 and 0 < x < self.w-1:
                         self.stdscr.addch(y, x, '#', curses.color_pair(3) | curses.A_BOLD)
                 
-                # Draw blocking bushes with @ symbol
-                for y, x in self.blocking_bushes:
-                    self.stdscr.addch(y, x, '@', 
+                # Draw level number and player name in top-left corner
+                self.stdscr.addstr(1, 2, f"Level {self.level_number} - {self.player_name}", 
+                                curses.color_pair(2) | curses.A_BOLD)
+                
+                self.draw_entrance()
+                
+                # Draw regular bushes
+                for bush_y, bush_x in self.bushes:
+                    self.stdscr.addch(bush_y, bush_x, '*', 
                                     curses.color_pair(1) | curses.A_BOLD)
                 
-                # Draw player with ♣ symbol
+                # Draw numbered blocking bushes
+                for bush in self.blocking_bushes:
+                    y, x = bush["pos"]
+                    self.stdscr.addch(y, x, str(bush["number"])[0], 
+                                    curses.color_pair(1) | curses.A_BOLD)
+                
+                # Draw player
                 self.stdscr.addch(self.player_y, self.player_x, '♣', 
                                 curses.color_pair(2) | curses.A_BOLD)
                 
@@ -161,6 +201,11 @@ class Level:
                 
                 # Handle movement
                 key = self.stdscr.getch()
+                
+                if key == 16:  # Ctrl+P
+                    self.blocking_bushes = []  # Clear special bushes
+                    continue
+                
                 old_y, old_x = self.player_y, self.player_x
                 
                 # Update movement controls to include arrows
@@ -174,9 +219,11 @@ class Level:
                     self.player_x += 1
                 elif key == ord('f'):  # Destroy bush
                     pos = (self.player_y, self.player_x)
-                    for bush_pos in list(self.blocking_bushes):
+                    for bush in list(self.blocking_bushes):
+                        bush_pos = bush["pos"]
                         if abs(bush_pos[0] - pos[0]) <= 1 and abs(bush_pos[1] - pos[1]) <= 1:
-                            self.blocking_bushes.remove(bush_pos)
+                            if self.try_break_bush(bush_pos):
+                                self.blocking_bushes.remove(bush)
                 elif key == ord('q'):
                     return 'QUIT'
                 elif key == ord('r'):
@@ -184,10 +231,13 @@ class Level:
                     
                 # Check for collisions
                 new_pos = (self.player_y, self.player_x)
-                if new_pos in self.wall_tiles or new_pos in self.blocking_bushes:
+                if new_pos in self.wall_tiles or new_pos in [b["pos"] for b in self.blocking_bushes]:
                     self.player_y, self.player_x = old_y, old_x
                     
             except curses.error:
                 continue
+
+def manhattan_distance(pos1, pos2):
+    return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
 
 # ...existing code...

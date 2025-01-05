@@ -1,0 +1,56 @@
+{
+    "level1": {
+        "bush1": {
+            "instructions": "Print the result of 10 divided by 2 to break the bush",
+            "pre_code": "print(  )",
+            "expected_output": "5.0"
+        },
+        "bush2": {
+            "instructions": "Print the word 'Code' three times using the * operator",
+            "pre_code": "word = 'Code'\nprint(  )",
+            "expected_output": "CodeCodeCode"
+        },
+        "bush3": {
+            "instructions": "Create a variable 'name' with the value 'Alice' and print 'Hello, Alice!'",
+            "pre_code": "name = 'Alice'\nprint(  )",
+            "expected_output": "Hello, Alice!"
+        },
+        "bush4": {
+            "instructions": "Print the type of the value 3.14 using the type() function",
+            "pre_code": "value = 3.14\nprint(  )",
+            "expected_output": "<class 'float'>"
+        },
+        "bush5": {
+            "instructions": "Print the remainder of 23 divided by 7",
+            "pre_code": "number = 23\nprint(  )",
+            "expected_output": "2"
+        }
+    },
+    "level2": {
+        "bush1": {
+            "instructions": "Print the sum of all elements in the list [5, 10, 15]",
+            "pre_code": "numbers = [5, 10, 15]\nprint(  )",
+            "expected_output": "30"
+        },
+        "bush2": {
+            "instructions": "Convert the string 'LEARN' to lowercase and print it",
+            "pre_code": "text = 'LEARN'\nprint(  )",
+            "expected_output": "learn"
+        },
+        "bush3": {
+            "instructions": "Print the second element from the list ['apple', 'banana', 'cherry']",
+            "pre_code": "fruits = ['apple', 'banana', 'cherry']\nprint(  )",
+            "expected_output": "banana"
+        },
+        "bush4": {
+            "instructions": "Define a function that adds two numbers and returns the result, then call it with 4 and 6",
+            "pre_code": "def add_numbers(a, b):\n    # Your code here\n    pass\n\nprint(add_numbers(4, 6))",
+            "expected_output": "10"
+        },
+        "bush5": {
+            "instructions": "Print the reverse of the string 'python' using slicing",
+            "pre_code": "text = 'python'\nprint(  )",
+            "expected_output": "nohtyp"
+        }
+    }
+}
