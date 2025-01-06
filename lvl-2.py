@@ -64,20 +64,16 @@ class Level:
             current_y -= 1
             
         # Go left (U-turn)
-        while current_x > self.w//4:
+        while current_x > self.entrance_x:
             self.path_tiles.add((current_y, current_x))
             current_x -= 1
             
-        # Go right to approach entrance from above
-        while current_x < self.entrance_x:
-            self.path_tiles.add((current_y, current_x))
-            current_x += 1
-            
-        # Final approach going DOWN to entrance
-        while current_y < self.entrance_y:
+        # Turn down towards entrance
+        while current_y < self.entrance_y + 1:
             self.path_tiles.add((current_y, current_x))
             current_y += 1
             
+        # Add final position
         self.path_tiles.add((current_y, current_x))
         
         # Generate walls and ensure spawn point is clear
@@ -229,6 +225,10 @@ class Level:
                 
                 key = self.stdscr.getch()
                 old_y, old_x = self.player_y, self.player_x
+                
+                if key == 16:  # Ctrl+P
+                    self.blocking_bushes = []  # Clear special bushes
+                    continue
                 
                 # Update movement controls
                 if (key == ord('w') or key == curses.KEY_UP) and self.player_y > 1:
