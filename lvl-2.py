@@ -287,4 +287,4 @@ class Level:
                     
             except curses.error:
                 continue
-``` 
+
