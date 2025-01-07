@@ -55,7 +55,7 @@ class Editor:
                 else:
                     self.restore_colors()
                     curses.curs_set(0)
-                    return None
+                    return (False, None)  # Return False to indicate editor was canceled
             elif key == curses.KEY_IC:  # Insert key
                 self.insert_mode = not self.insert_mode
             elif key == 9:  # Tab key
@@ -87,7 +87,7 @@ class Editor:
                         continue
                     self.restore_colors()
                     curses.curs_set(0)
-                    return result
+                    return (True, True)  # Return True to indicate success
             elif key == 3:  # Ctrl+C - Copy
                 self.copy_selection()
             elif key == 22:  # Ctrl+V - Paste

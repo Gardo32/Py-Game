@@ -19,10 +19,7 @@ class Level:
         self.bushes = self.create_bushes()
         self.blocking_bushes = self.place_blocking_bushes()
         self.player_name = player_name
-        self.bush_questions = {
-            "Print Hello World": "print('HW')",
-            "Calculate 2+2 and print result": "print(4)",
-        }
+        self.bush_questions = {}
         self.bush_count = 0  # Track which bush is being broken
 
     def init_colors(self):
@@ -196,13 +193,12 @@ class Level:
 
     def try_break_bush(self, pos):
         from editor import Editor
-        # Find the bush number for this position
         for bush in self.blocking_bushes:
             if bush["pos"] == pos:
                 bush_id = f"bush{bush['number']}"
-                editor = Editor(self.stdscr, 2, bush_id)  # Level 2
-                return editor.run()
-        return False
+                # Return needed info for editor
+                return ('EDITOR_OPEN', bush_id, self.level_number)
+        return None
 
     def run(self):
         while True:
@@ -259,13 +255,16 @@ class Level:
                     self.player_x -= 1
                 elif (key == ord('d') or key == curses.KEY_RIGHT) and self.player_x < self.w - 3:
                     self.player_x += 1
-                elif key == ord('f'):  # Destroy bush
+                elif key == ord('f'):  # Break bush
                     pos = (self.player_y, self.player_x)
                     for bush in list(self.blocking_bushes):
                         bush_pos = bush["pos"]
                         if abs(bush_pos[0] - pos[0]) <= 1 and abs(bush_pos[1] - pos[1]) <= 1:
-                            if self.try_break_bush(bush_pos):
-                                self.blocking_bushes.remove(bush)
+                            result = self.try_break_bush(bush_pos)
+                            if result:
+                                # Return editor opening signal with bush info
+                                return ('EDITOR_OPEN', result[1], result[2])
+                
                 elif key == ord('q'):
                     return 'QUIT'
                 

@@ -5,6 +5,8 @@ import importlib.util
 import sys
 import os
 import json
+from music_manager import MusicManager
+from editor import Editor  # Add this import at the top
 
 def draw_borders(stdscr):
     h, w = stdscr.getmaxyx()
@@ -97,13 +99,14 @@ def show_level_select(stdscr):
         elif key == 10:  # Enter
             return levels[selected_idx]
 
-def show_menu(stdscr):
+def show_menu(stdscr, music_manager):
     stdscr.clear()
     h, w = stdscr.getmaxyx()
     menu_text = [
         "Welcome to the Game!",
         "Use WASD or Arrow Keys to move",
         "Use `F` to Break Bushes",
+        f"Press 'M' to {('Disable' if music_manager.enabled else 'Enable')} Music",
         "Press 'S' to Start",
         "Press 'Q' to Quit"
     ]
@@ -120,6 +123,9 @@ def show_menu(stdscr):
             return 'QUIT'
         elif key in [ord('s'), ord('S')]:
             return 'START'
+        elif key in [ord('m'), ord('M')]:
+            music_manager.toggle_music()
+            return 'REFRESH_MENU'
         elif key == 16:  # Ctrl+P
             return 'REMOVE_BUSHES'  # Changed from 'SECRET_CREDITS'
         elif key == 17:  # Ctrl+Q
@@ -332,6 +338,12 @@ def get_player_name(stdscr):
     return name.strip()
 
 def main(stdscr):
+    # Create required music directories if they don't exist
+    for dir in ["music", "music/battle", "music/battle_mp3"]:
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+            print(f"Created directory: {dir}")
+    
     # Initialize Pokémon-style colors
     curses.start_color()
     curses.use_default_colors()  # Enable default terminal colors
@@ -357,54 +369,76 @@ def main(stdscr):
     game_state = 'MENU'
     player_name = ""
     level = None  # Keep track of current level instance
+    music_manager = MusicManager()
     
-    while True:
-        if game_state == 'MENU':
-            action = show_menu(stdscr)
-            if action == 'QUIT':
-                break
-            elif action == 'START':
-                player_name = get_player_name(stdscr)
-                if not player_name:
-                    player_name = "Player"
-                current_level = 1
-                game_state = 'PLAYING'
-                continue
-            elif action == 'REMOVE_BUSHES':
-                if level:  # If level exists, remove all blocking bushes
-                    level.blocking_bushes = []
-                continue
-            elif action == 'LEVEL_SELECT':
-                selected_level = show_level_select(stdscr)
-                if selected_level:
+    try:
+        while True:
+            if game_state == 'MENU':
+                action = show_menu(stdscr, music_manager)
+                if action == 'REFRESH_MENU':
+                    continue
+                elif action == 'QUIT':
+                    break
+                elif action == 'START':
+                    player_name = get_player_name(stdscr)
                     if not player_name:
-                        player_name = get_player_name(stdscr)
-                        if not player_name:
-                            player_name = "Player"
-                    current_level = selected_level
+                        player_name = "Player"
+                    current_level = 1
                     game_state = 'PLAYING'
-                continue
-        
-        if game_state == 'PLAYING':
-            level_class = load_level(current_level)
-            if not level_class:
-                show_end_credits(stdscr, player_name)
-                break
+                    music_manager.start_main_music()
+                    continue
+                elif action == 'REMOVE_BUSHES':
+                    if level:  # If level exists, remove all blocking bushes
+                        level.blocking_bushes = []
+                    continue
+                elif action == 'LEVEL_SELECT':
+                    selected_level = show_level_select(stdscr)
+                    if selected_level:
+                        if not player_name:
+                            player_name = get_player_name(stdscr)
+                            if not player_name:
+                                player_name = "Player"
+                        current_level = selected_level
+                        game_state = 'PLAYING'
+                    continue
             
-            level = level_class(stdscr, player_name)
-            while True:
-                result = level.run()
-                if result == 'QUIT':
-                    game_state = 'MENU'
+            if game_state == 'PLAYING':
+                level_class = load_level(current_level)
+                if not level_class:
+                    show_end_credits(stdscr, player_name)
                     break
-                elif result == 'NEXT_LEVEL':
-                    current_level += 1
-                    break
-                elif result == 'RESTART':
-                    game_state = 'MENU'
-                    break
-                elif result == 'REMOVE_BUSHES':  # Handle bush removal
-                    level.blocking_bushes = []
+                
+                level = level_class(stdscr, player_name)
+                while True:
+                    result = level.run()
+                    if isinstance(result, tuple):
+                        if result[0] == 'EDITOR_OPEN':
+                            music_manager.start_editor_music()
+                            bush_id = result[1]
+                            level_num = result[2]
+                            editor = Editor(stdscr, level_num, bush_id)
+                            editor_result = editor.run()
+                            if editor_result[0]:  # If bush was broken successfully
+                                level.blocking_bushes = [b for b in level.blocking_bushes 
+                                                       if f"bush{b['number']}" != bush_id]
+                            music_manager.resume_main_music()
+                            continue
+                    if result == 'QUIT':
+                        game_state = 'MENU'
+                        break
+                    elif result == 'EDITOR_CLOSE':
+                        music_manager.resume_main_music()
+                    elif result == 'NEXT_LEVEL':
+                        current_level += 1
+                        break
+                    elif result == 'RESTART':
+                        game_state = 'MENU'
+                        break
+                    elif result == 'REMOVE_BUSHES':  # Handle bush removal
+                        level.blocking_bushes = []
+    finally:
+        # Ensure cleanup happens when game exits
+        music_manager.cleanup()
 
 if __name__ == '__main__':
     wrapper(main)
