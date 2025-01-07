@@ -34,9 +34,16 @@ class Editor:
             curses.init_pair(pair_n, fg, bg)
 
     def run(self):
-        curses.curs_set(1)  # Show cursor
-        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)  # For instructions
-        curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_WHITE)  # For status
+        curses.curs_set(1)
+        BEIGE = 230
+        
+        # Editor specific colors
+        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)  # Instructions
+        curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_WHITE)  # Status bar
+        curses.init_pair(3, curses.COLOR_BLACK, BEIGE)  # Regular text
+        
+        # Set editor background
+        self.stdscr.bkgd(' ', curses.color_pair(3))
         
         while True:
             self.draw()

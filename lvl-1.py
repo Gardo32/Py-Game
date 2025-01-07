@@ -25,9 +25,24 @@ class Level:
 
     def init_colors(self):
         curses.start_color()
-        curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)  # Bush
-        curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK)  # Player
-        curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLACK)  # Entrance
+        curses.use_default_colors()
+        
+        # Theme colors
+        BEIGE = 230  # Page color
+        BROWN = 94   # Wall color
+        
+        # Initialize color pairs
+        curses.init_pair(1, curses.COLOR_GREEN, BEIGE)     # Bush color
+        curses.init_pair(2, curses.COLOR_BLACK, BEIGE)     # Player color (changed to black)
+        curses.init_pair(3, curses.COLOR_RED, BEIGE)       # Important elements
+        curses.init_pair(4, curses.COLOR_WHITE, BEIGE)     # Path/text
+        curses.init_pair(5, curses.COLOR_MAGENTA, BEIGE)   # Special effects
+        curses.init_pair(6, curses.COLOR_BLUE, BEIGE)      # Water/special areas
+        curses.init_pair(7, BROWN, BEIGE)                  # Walls
+        curses.init_pair(8, curses.COLOR_BLACK, BEIGE)     # Regular text
+        
+        # Set background color
+        self.stdscr.bkgd(' ', curses.color_pair(4))
 
     def generate_path(self):
         current_y = self.h - 2
@@ -136,11 +151,9 @@ class Level:
 
     def draw_entrance(self):
         try:
-            # Draw the entrance frame
-            self.stdscr.addstr(self.entrance_y, self.entrance_x - 4, "____", curses.color_pair(3))
-            self.stdscr.addstr(self.entrance_y, self.entrance_x + self.entrance_width, "____", curses.color_pair(3))
-            
-            # Draw the vertical bars
+            # Draw entrance with special color
+            self.stdscr.addstr(self.entrance_y, self.entrance_x - 4, "====", curses.color_pair(3))
+            self.stdscr.addstr(self.entrance_y, self.entrance_x + self.entrance_width, "====", curses.color_pair(3))
             self.stdscr.addch(self.entrance_y + 1, self.entrance_x - 1, '|', curses.color_pair(3))
             self.stdscr.addch(self.entrance_y + 1, self.entrance_x + self.entrance_width, '|', curses.color_pair(3))
             
@@ -166,30 +179,35 @@ class Level:
                 self.stdscr.clear()
                 self.draw_borders()
                 
-                # Draw walls first
+                # Draw walls with brown color
                 for y, x in self.wall_tiles:
                     if 0 < y < self.h-1 and 0 < x < self.w-1:
-                        self.stdscr.addch(y, x, '#', curses.color_pair(3) | curses.A_BOLD)
+                        self.stdscr.addch(y, x, '#', curses.color_pair(7) | curses.A_BOLD)
                 
-                # Draw level number and player name in top-left corner
+                # Update text color for level info
                 self.stdscr.addstr(1, 2, f"Level {self.level_number} - {self.player_name}", 
-                                curses.color_pair(2) | curses.A_BOLD)
+                                curses.color_pair(8) | curses.A_BOLD)
+                
+                # Update path drawing (optional)
+                for y, x in self.path_tiles:
+                    if 0 < y < self.h-1 and 0 < x < self.w-1:
+                        self.stdscr.addch(y, x, '.', curses.color_pair(4))
                 
                 self.draw_entrance()
                 
-                # Draw regular bushes
+                # Draw regular bushes (green)
                 for bush_y, bush_x in self.bushes:
-                    self.stdscr.addch(bush_y, bush_x, '*', 
+                    self.stdscr.addch(bush_y, bush_x, '♣', 
                                     curses.color_pair(1) | curses.A_BOLD)
                 
-                # Draw numbered blocking bushes
+                # Draw numbered blocking bushes (special green)
                 for bush in self.blocking_bushes:
                     y, x = bush["pos"]
                     self.stdscr.addch(y, x, str(bush["number"])[0], 
                                     curses.color_pair(1) | curses.A_BOLD)
                 
-                # Draw player
-                self.stdscr.addch(self.player_y, self.player_x, '♣', 
+                # Draw player (black)
+                self.stdscr.addch(self.player_y, self.player_x, '☺', 
                                 curses.color_pair(2) | curses.A_BOLD)
                 
                 # Move level completion check before refresh

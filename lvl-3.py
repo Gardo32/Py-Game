@@ -7,22 +7,20 @@ class Level:
         self.init_colors()
         curses.curs_set(0)
         self.h, self.w = stdscr.getmaxyx()
-        self.player_y = self.h - 4  # Set player start position inside maze
-        self.player_x = 4  # A few spaces from left wall
-        self.entrance_y = self.h // 2  # Middle vertical position
-        self.entrance_x = self.w // 2  # Middle horizontal position
+        self.player_y = self.h - 4  # Set player start position
+        self.player_x = 4
+        
+        # Place entrance on right side
+        self.entrance_y = random.randint(2, self.h - 4)
+        self.entrance_x = self.w - 10  # Fixed x position on right side
         self.entrance_width = 3
-        self.level_number = 2
-        self.path_tiles = set()  # Path tiles
-        self.wall_tiles = set()  # Wall tiles
-        self.generate_path()
+        self.level_number = 3
+        self.path_tiles = set()
+        self.wall_tiles = set()
+        self.generate_path()  # Generate the path first
         self.bushes = self.create_bushes()
         self.blocking_bushes = self.place_blocking_bushes()
         self.player_name = player_name
-        self.bush_questions = {
-            "Print Hello World": "print('HW')",
-            "Calculate 2+2 and print result": "print(4)",
-        }
         self.bush_count = 0  # Track which bush is being broken
 
     def init_colors(self):
@@ -46,112 +44,22 @@ class Level:
         # Set background color
         self.stdscr.bkgd(' ', curses.color_pair(4))
 
-    def create_bushes(self):
-        bushes = []
-        for _ in range(20):
-            bush_y = random.randint(1, self.h - 3)
-            bush_x = random.randint(1, self.w - 3)
-            pos = (bush_y, bush_x)
-            if (pos not in self.path_tiles and 
-                pos not in self.wall_tiles):
-                bushes.append(pos)
-        return bushes
-
-    def generate_path(self):
-        self.path_tiles.clear()
-        self.wall_tiles.clear()
-        
-        # Starting area (where player spawns)
-        current_y = self.h - 4
-        current_x = 4
-        
-        # Add spawn area to path
-        self.path_tiles.add((current_y, current_x))
-        
-        # First corridor right
-        while current_x < self.w - 8:
-            self.path_tiles.add((current_y, current_x))
-            current_x += 1
-            
-        # Go up along right side
-        while current_y > self.h//3:
-            self.path_tiles.add((current_y, current_x))
-            current_y -= 1
-            
-        # Go left (U-turn)
-        while current_x > self.entrance_x:
-            self.path_tiles.add((current_y, current_x))
-            current_x -= 1
-            
-        # Turn down towards entrance
-        while current_y < self.entrance_y + 1:
-            self.path_tiles.add((current_y, current_x))
-            current_y += 1
-            
-        # Add final position
-        self.path_tiles.add((current_y, current_x))
-        
-        # Generate walls and ensure spawn point is clear
-        self.generate_walls()
-        self.wall_tiles.discard((self.player_y, self.player_x))
-        self.path_tiles.add((self.player_y, self.player_x))
-
-    def add_side_paths(self):
-        # Add some dead ends and alternative paths
-        for _ in range(3):
-            start_points = list(self.path_tiles)
-            if start_points:
-                start = random.choice(start_points)
-                current_y, current_x = start
-                length = random.randint(3, 6)
-                direction = random.choice([(0,1), (0,-1), (1,0), (-1,0)])
-                
-                for _ in range(length):
-                    new_y = current_y + direction[0]
-                    new_x = current_x + direction[1]
-                    if 2 < new_y < self.h-3 and 2 < new_x < self.w-3:
-                        self.path_tiles.add((new_y, new_x))
-                        current_y, current_x = new_y, new_x
-
-    def generate_walls(self):
-        # Generate walls around all paths
-        for y, x in list(self.path_tiles):
-            for dy in [-1, 0, 1]:
-                for dx in [-1, 0, 1]:
-                    wall_pos = (y+dy, x+dx)
-                    # Don't add walls near the entrance
-                    if (wall_pos not in self.path_tiles and
-                        not (self.entrance_y <= wall_pos[0] <= self.entrance_y + 1 and
-                             self.entrance_x - 1 <= wall_pos[1] <= self.entrance_x + self.entrance_width + 1)):
-                        self.wall_tiles.add(wall_pos)
-        
-        # Make sure entrance area is clear
-        entrance_area = [(y, x) 
-                        for y in range(self.entrance_y, self.entrance_y + 2)
-                        for x in range(self.entrance_x - 1, self.entrance_x + self.entrance_width + 1)]
-        for pos in entrance_area:
-            self.wall_tiles.discard(pos)
-
     def manhattan_distance(self, pos1, pos2):
         return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
 
     def is_valid_bush_position(self, pos, existing_bushes, min_distance=4):
-        # Check distance from entrance
-        if abs(pos[0] - self.entrance_y) <= 2 and abs(pos[1] - self.entrance_x) <= 2:
-            return False
-            
-        # Check distance from other bushes (must be at least min_distance away)
+        # Only check distance from other bushes, since we already filtered path points
         for bush in existing_bushes:
             if self.manhattan_distance(pos, bush["pos"]) < min_distance:
                 return False
-                
         return True
 
     def place_blocking_bushes(self):
         blocking_bushes = []
-        # Get path points excluding spawn area
+        # Get path points excluding spawn area and entrance
         path_points = [(y, x) for y, x in self.path_tiles 
-                      if self.manhattan_distance((y, x), (self.player_y, self.player_x)) > 4]
+                      if self.manhattan_distance((y, x), (self.player_y, self.player_x)) > 4 and
+                      not (abs(y - self.entrance_y) <= 2 and abs(x - self.entrance_x) <= 2)]
         
         # Sort path points by distance from start
         path_points.sort(key=lambda pos: self.manhattan_distance(pos, (self.player_y, self.player_x)))
@@ -159,7 +67,7 @@ class Level:
         # Try to place bushes ensuring minimum random distance
         bush_number = 1
         for pos in path_points:
-            min_distance = random.randint(10, 20)  # Random minimum distance between 10-20 blocks
+            min_distance = random.randint(10, 20)
             if self.is_valid_bush_position(pos, blocking_bushes, min_distance):
                 blocking_bushes.append({"pos": pos, "number": bush_number})
                 bush_number += 1
@@ -167,6 +75,17 @@ class Level:
                     break
                     
         return blocking_bushes
+
+    def create_bushes(self):
+        bushes = []
+        for _ in range(20):
+            bush_y = random.randint(1, self.h - 3)
+            bush_x = random.randint(1, self.w - 3)
+            pos = (bush_y, bush_x)
+            if not (bush_y == self.entrance_y and 
+                   self.entrance_x <= bush_x <= self.entrance_x + self.entrance_width):
+                bushes.append(pos)
+        return bushes
 
     def draw_borders(self):
         h, w = self.stdscr.getmaxyx()
@@ -181,16 +100,15 @@ class Level:
 
     def draw_entrance(self):
         try:
-            # Clear entrance area first
-            for y in range(self.entrance_y, self.entrance_y + 2):
-                for x in range(self.entrance_x - 1, self.entrance_x + self.entrance_width + 1):
-                    self.stdscr.addch(y, x, ' ')
-            
             # Draw entrance frame
             self.stdscr.addstr(self.entrance_y, self.entrance_x - 4, "____", curses.color_pair(3))
             self.stdscr.addstr(self.entrance_y, self.entrance_x + self.entrance_width, "____", curses.color_pair(3))
             self.stdscr.addch(self.entrance_y + 1, self.entrance_x - 1, '|', curses.color_pair(3))
             self.stdscr.addch(self.entrance_y + 1, self.entrance_x + self.entrance_width, '|', curses.color_pair(3))
+            
+            # Clear entrance space
+            for x in range(self.entrance_width):
+                self.stdscr.addch(self.entrance_y, self.entrance_x + x, ' ', curses.color_pair(3))
         except curses.error:
             pass
 
@@ -200,9 +118,62 @@ class Level:
         for bush in self.blocking_bushes:
             if bush["pos"] == pos:
                 bush_id = f"bush{bush['number']}"
-                editor = Editor(self.stdscr, 2, bush_id)  # Level 2
+                editor = Editor(self.stdscr, self.level_number, bush_id)  # Use self.level_number instead of hardcoded 3
                 return editor.run()
         return False
+
+    def generate_path(self):
+        self.path_tiles.clear()
+        self.wall_tiles.clear()
+        
+        current_y = self.player_y
+        current_x = self.player_x
+        target_y = self.entrance_y + 1  # Target is one below entrance
+        target_x = self.entrance_x
+        
+        # Add starting position
+        self.path_tiles.add((current_y, current_x))
+        
+        # Generate path with 90-degree turns
+        while (current_y, current_x) != (target_y, target_x):
+            # Decide movement direction (vertical or horizontal)
+            if random.choice([True, False]) and current_y != target_y:
+                # Move vertically
+                step = 1 if target_y > current_y else -1
+                while current_y != target_y:
+                    current_y += step
+                    self.path_tiles.add((current_y, current_x))
+                    # Random chance to stop and make a turn
+                    if random.random() < 0.3 and current_y != target_y:
+                        break
+            elif current_x != target_x:
+                # Move horizontally
+                step = 1 if target_x > current_x else -1
+                while current_x != target_x:
+                    current_x += step
+                    self.path_tiles.add((current_y, current_x))
+                    # Random chance to stop and make a turn
+                    if random.random() < 0.3 and current_x != target_x:
+                        break
+        
+        # Ensure the entrance position is in the path
+        self.path_tiles.add((target_y, target_x))
+        
+        # Generate walls around path
+        for y, x in list(self.path_tiles):
+            for dy, dx in [(-1,0), (1,0), (0,-1), (0,1)]:
+                wall_pos = (y+dy, x+dx)
+                if wall_pos not in self.path_tiles:
+                    self.wall_tiles.add(wall_pos)
+        
+        # Clear walls around entrance
+        entrance_area = [(y, x) 
+                        for y in range(self.entrance_y, self.entrance_y + 2)
+                        for x in range(self.entrance_x - 1, self.entrance_x + self.entrance_width + 1)]
+        for pos in entrance_area:
+            self.wall_tiles.discard(pos)
+            if pos[0] == self.entrance_y + 1:  # Add floor tiles at entrance
+                self.path_tiles.add(pos)
 
     def run(self):
         while True:
@@ -268,6 +239,8 @@ class Level:
                                 self.blocking_bushes.remove(bush)
                 elif key == ord('q'):
                     return 'QUIT'
+                elif key == ord('r'):
+                    return 'RESTART'
                 
                 # Check collisions
                 new_pos = (self.player_y, self.player_x)
@@ -287,4 +260,3 @@ class Level:
                     
             except curses.error:
                 continue
-``` 
