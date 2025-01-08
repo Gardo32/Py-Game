@@ -1,274 +1,272 @@
 {
     "level1": {
         "bush1": {
-            "instructions": "Print the result of 10 divided by 2 to break the bush",
-            "pre_code": "print(  )",
-            "expected_output": "5.0"
+            "instructions": "Create a variable 'age' with the value 25 and print it.",
+            "pre_code": "age = 25\nprint(  )",
+            "expected_output": "25"
         },
         "bush2": {
-            "instructions": "Print the word 'Code' three times using the * operator",
-            "pre_code": "word = 'Code'\nprint(  )",
-            "expected_output": "CodeCodeCode"
+            "instructions": "Print the type of the value 'Hello' using the type() function.",
+            "pre_code": "value = 'Hello'\nprint(  )",
+            "expected_output": "<class 'str'>"
         },
         "bush3": {
-            "instructions": "Create a variable 'name' with the value 'Alice' and print 'Hello, Alice!'",
-            "pre_code": "name = 'Alice'\nprint(  )",
-            "expected_output": "Hello, Alice!"
+            "instructions": "Create a variable 'price' with the value 19.99 and print it.",
+            "pre_code": "price = 19.99\nprint(  )",
+            "expected_output": "19.99"
         },
         "bush4": {
-            "instructions": "Print the type of the value 3.14 using the type() function",
-            "pre_code": "value = 3.14\nprint(  )",
-            "expected_output": "<class 'float'>"
+            "instructions": "Print the result of 10 divided by 3.",
+            "pre_code": "result = 10 / 3\nprint(  )",
+            "expected_output": "3.3333333333333335"
         },
         "bush5": {
-            "instructions": "Print the remainder of 23 divided by 7",
-            "pre_code": "number = 23\nprint(  )",
-            "expected_output": "2"
+            "instructions": "Create a variable 'is_student' with the value True and print it.",
+            "pre_code": "is_student = True\nprint(  )",
+            "expected_output": "True"
         }
     },
     "level2": {
         "bush1": {
-            "instructions": "Print the sum of all elements in the list [5, 10, 15]",
-            "pre_code": "numbers = [5, 10, 15]\nprint(  )",
-            "expected_output": "30"
+            "instructions": "Print the sum of 5 and 3.14.",
+            "pre_code": "result = 5 + 3.14\nprint(  )",
+            "expected_output": "8.14"
         },
         "bush2": {
-            "instructions": "Convert the string 'LEARN' to lowercase and print it",
-            "pre_code": "text = 'LEARN'\nprint(  )",
-            "expected_output": "learn"
+            "instructions": "Convert the integer 10 to a float and print it.",
+            "pre_code": "number = float(10)\nprint(  )",
+            "expected_output": "10.0"
         },
         "bush3": {
-            "instructions": "Print the second element from the list ['apple', 'banana', 'cherry']",
-            "pre_code": "fruits = ['apple', 'banana', 'cherry']\nprint(  )",
-            "expected_output": "banana"
+            "instructions": "Convert the string '100' to an integer and print it.",
+            "pre_code": "number = int('100')\nprint(  )",
+            "expected_output": "100"
         },
         "bush4": {
-            "instructions": "Define a function that adds two numbers and returns the result, then call it with 4 and 6",
-            "pre_code": "def add_numbers(a, b):\n    # Your code here\n    pass\n\nprint(add_numbers(4, 6))",
-            "expected_output": "10"
+            "instructions": "Convert the float 3.14 to a string and print it.",
+            "pre_code": "text = str(3.14)\nprint(  )",
+            "expected_output": "3.14"
         },
         "bush5": {
-            "instructions": "Print the reverse of the string 'python' using slicing",
-            "pre_code": "text = 'python'\nprint(  )",
-            "expected_output": "nohtyp"
+            "instructions": "Convert the boolean True to an integer and print it.",
+            "pre_code": "number = int(True)\nprint(  )",
+            "expected_output": "1"
         }
     },
     "level3": {
         "bush1": {
-            "instructions": "Check if the number 7 is present in the list [3, 7, 9] and print True or False",
-            "pre_code": "numbers = [3, 7, 9]\nprint(  )",
+            "instructions": "Print the length of the string 'Python'.",
+            "pre_code": "text = 'Python'\nprint(  )",
+            "expected_output": "6"
+        },
+        "bush2": {
+            "instructions": "Print the first character of the string 'Hello'.",
+            "pre_code": "text = 'Hello'\nprint(  )",
+            "expected_output": "H"
+        },
+        "bush3": {
+            "instructions": "Print the last character of the string 'World'.",
+            "pre_code": "text = 'World'\nprint(  )",
+            "expected_output": "d"
+        },
+        "bush4": {
+            "instructions": "Print the substring 'ell' from the string 'Hello'.",
+            "pre_code": "text = 'Hello'\nprint(  )",
+            "expected_output": "ell"
+        },
+        "bush5": {
+            "instructions": "Print the result of concatenating 'Hello' and 'World'.",
+            "pre_code": "text1 = 'Hello'\ntext2 = 'World'\nprint(  )",
+            "expected_output": "HelloWorld"
+        }
+    },
+    "level4": {
+        "bush1": {
+            "instructions": "Print the result of the expression 5 > 3.",
+            "pre_code": "result = 5 > 3\nprint(  )",
             "expected_output": "True"
         },
         "bush2": {
-            "instructions": "Write a function that returns the square of a number and call it with 5",
+            "instructions": "Print the result of the expression 10 == 10.",
+            "pre_code": "result = 10 == 10\nprint(  )",
+            "expected_output": "True"
+        },
+        "bush3": {
+            "instructions": "Print the result of the expression 7 < 5.",
+            "pre_code": "result = 7 < 5\nprint(  )",
+            "expected_output": "False"
+        },
+        "bush4": {
+            "instructions": "Print the result of the expression 'apple' != 'orange'.",
+            "pre_code": "result = 'apple' != 'orange'\nprint(  )",
+            "expected_output": "True"
+        },
+        "bush5": {
+            "instructions": "Print the result of the expression not (10 > 5).",
+            "pre_code": "result = not (10 > 5)\nprint(  )",
+            "expected_output": "False"
+        }
+    },
+    "level5": {
+        "bush1": {
+            "instructions": "Print the result of adding 5 and 3.",
+            "pre_code": "result = 5 + 3\nprint(  )",
+            "expected_output": "8"
+        },
+        "bush2": {
+            "instructions": "Print the result of subtracting 10 from 20.",
+            "pre_code": "result = 20 - 10\nprint(  )",
+            "expected_output": "10"
+        },
+        "bush3": {
+            "instructions": "Print the result of multiplying 4 by 7.",
+            "pre_code": "result = 4 * 7\nprint(  )",
+            "expected_output": "28"
+        },
+        "bush4": {
+            "instructions": "Print the result of dividing 15 by 3.",
+            "pre_code": "result = 15 / 3\nprint(  )",
+            "expected_output": "5.0"
+        },
+        "bush5": {
+            "instructions": "Print the result of 2 raised to the power of 3.",
+            "pre_code": "result = 2 ** 3\nprint(  )",
+            "expected_output": "8"
+        }
+    },
+    "level6": {
+        "bush1": {
+            "instructions": "Create a list of numbers from 1 to 5 and print it.",
+            "pre_code": "numbers = [1, 2, 3, 4, 5]\nprint(  )",
+            "expected_output": "[1, 2, 3, 4, 5]"
+        },
+        "bush2": {
+            "instructions": "Print the second element of the list ['apple', 'banana', 'cherry'].",
+            "pre_code": "fruits = ['apple', 'banana', 'cherry']\nprint(  )",
+            "expected_output": "banana"
+        },
+        "bush3": {
+            "instructions": "Add 'orange' to the list ['apple', 'banana', 'cherry'] and print the updated list.",
+            "pre_code": "fruits = ['apple', 'banana', 'cherry']\nfruits.append('orange')\nprint(  )",
+            "expected_output": "['apple', 'banana', 'cherry', 'orange']"
+        },
+        "bush4": {
+            "instructions": "Remove 'banana' from the list ['apple', 'banana', 'cherry'] and print the updated list.",
+            "pre_code": "fruits = ['apple', 'banana', 'cherry']\nfruits.remove('banana')\nprint(  )",
+            "expected_output": "['apple', 'cherry']"
+        },
+        "bush5": {
+            "instructions": "Print the length of the list [10, 20, 30, 40, 50].",
+            "pre_code": "numbers = [10, 20, 30, 40, 50]\nprint(  )",
+            "expected_output": "5"
+        }
+    },
+    "level7": {
+        "bush1": {
+            "instructions": "Create a tuple with elements 1, 2, 3 and print it.",
+            "pre_code": "my_tuple = (1, 2, 3)\nprint(  )",
+            "expected_output": "(1, 2, 3)"
+        },
+        "bush2": {
+            "instructions": "Print the first element of the tuple ('apple', 'banana', 'cherry').",
+            "pre_code": "fruits = ('apple', 'banana', 'cherry')\nprint(  )",
+            "expected_output": "apple"
+        },
+        "bush3": {
+            "instructions": "Convert the list [1, 2, 3] to a tuple and print it.",
+            "pre_code": "my_list = [1, 2, 3]\nmy_tuple = tuple(my_list)\nprint(  )",
+            "expected_output": "(1, 2, 3)"
+        },
+        "bush4": {
+            "instructions": "Print the length of the tuple (10, 20, 30, 40).",
+            "pre_code": "numbers = (10, 20, 30, 40)\nprint(  )",
+            "expected_output": "4"
+        },
+        "bush5": {
+            "instructions": "Check if the value 5 is in the tuple (1, 2, 3, 4, 5) and print the result.",
+            "pre_code": "numbers = (1, 2, 3, 4, 5)\nprint(  )",
+            "expected_output": "True"
+        }
+    },
+    "level8": {
+        "bush1": {
+            "instructions": "Create a set with elements 1, 2, 3 and print it.",
+            "pre_code": "my_set = {1, 2, 3}\nprint(  )",
+            "expected_output": "{1, 2, 3}"
+        },
+        "bush2": {
+            "instructions": "Add the element 4 to the set {1, 2, 3} and print the updated set.",
+            "pre_code": "my_set = {1, 2, 3}\nmy_set.add(4)\nprint(  )",
+            "expected_output": "{1, 2, 3, 4}"
+        },
+        "bush3": {
+            "instructions": "Remove the element 2 from the set {1, 2, 3} and print the updated set.",
+            "pre_code": "my_set = {1, 2, 3}\nmy_set.remove(2)\nprint(  )",
+            "expected_output": "{1, 3}"
+        },
+        "bush4": {
+            "instructions": "Print the length of the set {10, 20, 30, 40}.",
+            "pre_code": "numbers = {10, 20, 30, 40}\nprint(  )",
+            "expected_output": "4"
+        },
+        "bush5": {
+            "instructions": "Check if the value 5 is in the set {1, 2, 3, 4} and print the result.",
+            "pre_code": "numbers = {1, 2, 3, 4}\nprint(  )",
+            "expected_output": "False"
+        }
+    },
+    "level9": {
+        "bush1": {
+            "instructions": "Create a dictionary with keys 'a', 'b', 'c' and values 1, 2, 3, and print it.",
+            "pre_code": "my_dict = {'a': 1, 'b': 2, 'c': 3}\nprint(  )",
+            "expected_output": "{'a': 1, 'b': 2, 'c': 3}"
+        },
+        "bush2": {
+            "instructions": "Print the value associated with the key 'b' in the dictionary {'a': 1, 'b': 2, 'c': 3}.",
+            "pre_code": "my_dict = {'a': 1, 'b': 2, 'c': 3}\nprint(  )",
+            "expected_output": "2"
+        },
+        "bush3": {
+            "instructions": "Add a new key-value pair 'd': 4 to the dictionary {'a': 1, 'b': 2, 'c': 3} and print the updated dictionary.",
+            "pre_code": "my_dict = {'a': 1, 'b': 2, 'c': 3}\nmy_dict['d'] = 4\nprint(  )",
+            "expected_output": "{'a': 1, 'b': 2, 'c': 3, 'd': 4}"
+        },
+        "bush4": {
+            "instructions": "Remove the key 'b' from the dictionary {'a': 1, 'b': 2, 'c': 3} and print the updated dictionary.",
+            "pre_code": "my_dict = {'a': 1, 'b': 2, 'c': 3}\ndel my_dict['b']\nprint(  )",
+            "expected_output": "{'a': 1, 'c': 3}"
+        },
+        "bush5": {
+            "instructions": "Print the length of the dictionary {'a': 1, 'b': 2, 'c': 3, 'd': 4}.",
+            "pre_code": "my_dict = {'a': 1, 'b': 2, 'c': 3, 'd': 4}\nprint(  )",
+            "expected_output": "4"
+        }
+    },
+    "level10": {
+        "bush1": {
+            "instructions": "Write a function that takes a number and returns its square. Call it with 5.",
             "pre_code": "def square(n):\n    # Your code here\n    pass\n\nprint(square(5))",
             "expected_output": "25"
         },
+        "bush2": {
+            "instructions": "Write a function that takes two numbers and returns their sum. Call it with 3 and 4.",
+            "pre_code": "def add(a, b):\n    # Your code here\n    pass\n\nprint(add(3, 4))",
+            "expected_output": "7"
+        },
         "bush3": {
-            "instructions": "Print the length of the string 'Hello World!'",
-            "pre_code": "text = 'Hello World!'\nprint(  )",
-            "expected_output": "12"
+            "instructions": "Write a function that takes a list and returns its length. Call it with [1, 2, 3, 4].",
+            "pre_code": "def get_length(lst):\n    # Your code here\n    pass\n\nprint(get_length([1, 2, 3, 4]))",
+            "expected_output": "4"
         },
         "bush4": {
-            "instructions": "Create a list of even numbers from 2 to 10 and print it",
-            "pre_code": "even_numbers = [  ]\nprint(even_numbers)",
-            "expected_output": "[2, 4, 6, 8, 10]"
-        },
-        "bush5": {
-            "instructions": "Create a dictionary with keys 'a', 'b', 'c' and values 1, 2, 3, and print the value of key 'b'",
-            "pre_code": "my_dict = {'a': 1, 'b': 2, 'c': 3}\nprint(  )",
-            "expected_output": "2"
-        }
-    },
-"level4": {
-        "bush1": {
             "instructions": "Write a function that takes a string and returns it in uppercase. Call it with 'hello'.",
             "pre_code": "def to_uppercase(s):\n    # Your code here\n    pass\n\nprint(to_uppercase('hello'))",
             "expected_output": "HELLO"
         },
-        "bush2": {
-            "instructions": "Create a list of numbers [10, 20, 30, 40] and print only the numbers greater than 20 using a loop.",
-            "pre_code": "numbers = [10, 20, 30, 40]\nfor num in numbers:\n    if num > 20:\n        print(  )",
-            "expected_output": "30\n40"
-        },
-        "bush3": {
-            "instructions": "Write a function that calculates the factorial of a number and call it with 5.",
-            "pre_code": "def factorial(n):\n    # Your code here\n    pass\n\nprint(factorial(5))",
-            "expected_output": "120"
-        },
-        "bush4": {
-            "instructions": "Create a function that checks if a number is a palindrome (same forwards and backwards) and call it with 121.",
-            "pre_code": "def is_palindrome(n):\n    # Your code here\n    pass\n\nprint(is_palindrome(121))",
-            "expected_output": "True"
-        },
         "bush5": {
-            "instructions": "Generate a list of squares for numbers from 1 to 5 using a list comprehension.",
-            "pre_code": "squares = [  ]\nprint(squares)",
-            "expected_output": "[1, 4, 9, 16, 25]"
+            "instructions": "Write a function that takes a number and returns True if it's even, otherwise False. Call it with 6.",
+            "pre_code": "def is_even(n):\n    # Your code here\n    pass\n\nprint(is_even(6))",
+            "expected_output": "True"
         }
-    },
-            "level5": {
-                "bush1": {
-                    "instructions": "Write a function that takes a list and returns only the odd numbers. Call it with [1, 2, 3, 4, 5].",
-                    "pre_code": "def get_odd_numbers(lst):\n    # Your code here\n    pass\n\nprint(get_odd_numbers([1, 2, 3, 4, 5]))",
-                    "expected_output": "[1, 3, 5]"
-                },
-                "bush2": {
-                    "instructions": "Print the Fibonacci sequence up to the 6th number using a loop.",
-                    "pre_code": "a, b = 0, 1\nfor _ in range(6):\n    print(  )\n    a, b = b, a + b",
-                    "expected_output": "0\n1\n1\n2\n3\n5"
-                },
-                "bush3": {
-                    "instructions": "Create a function that takes a string and returns the number of vowels in it. Call it with 'education'.",
-                    "pre_code": "def count_vowels(s):\n    # Your code here\n    pass\n\nprint(count_vowels('education'))",
-                    "expected_output": "5"
-                },
-                "bush4": {
-                    "instructions": "Write a function that returns the maximum value in a list. Call it with [3, 7, 2, 9].",
-                    "pre_code": "def find_max(lst):\n    # Your code here\n    pass\n\nprint(find_max([3, 7, 2, 9]))",
-                    "expected_output": "9"
-                },
-                "bush5": {
-                    "instructions": "Create a dictionary with keys as numbers 1-3 and values as their squares. Print it.",
-                    "pre_code": "squared_dict = {  }\nprint(squared_dict)",
-                    "expected_output": "{1: 1, 2: 4, 3: 9}"
-                }
-            },
-
-            "level6": {
-                "bush1": {
-                    "instructions": "Write a function that takes two lists and returns their intersection. Call it with [1, 2, 3] and [2, 3, 4].",
-                    "pre_code": "def list_intersection(lst1, lst2):\n    # Your code here\n    pass\n\nprint(list_intersection([1, 2, 3], [2, 3, 4]))",
-                    "expected_output": "[2, 3]"
-                },
-                "bush2": {
-                    "instructions": "Generate a list of all numbers divisible by 3 between 1 and 20 using list comprehension.",
-                    "pre_code": "divisible_by_3 = [  ]\nprint(divisible_by_3)",
-                    "expected_output": "[3, 6, 9, 12, 15, 18]"
-                },
-                "bush3": {
-                    "instructions": "Write a function to calculate the sum of digits of a number. Call it with 1234.",
-                    "pre_code": "def sum_of_digits(n):\n    # Your code here\n    pass\n\nprint(sum_of_digits(1234))",
-                    "expected_output": "10"
-                },
-                "bush4": {
-                    "instructions": "Create a nested dictionary to represent a student with 'name', 'age', and a 'grades' list. Print the 'grades'.",
-                    "pre_code": "student = {'name': 'John', 'age': 16, 'grades': [85, 90, 78]}\nprint(  )",
-                    "expected_output": "[85, 90, 78]"
-                },
-                "bush5": {
-                    "instructions": "Write a function that returns the factorial of a number using recursion. Call it with 4.",
-                    "pre_code": "def factorial_recursive(n):\n    # Your code here\n    pass\n\nprint(factorial_recursive(4))",
-                    "expected_output": "24"
-                }
-            },
-            "level7": {
-                "bush1": {
-                    "instructions": "Write a function that checks if two strings are anagrams. Call it with 'listen' and 'silent'.",
-                    "pre_code": "def are_anagrams(s1, s2):\n    # Your code here\n    pass\n\nprint(are_anagrams('listen', 'silent'))",
-                    "expected_output": "True"
-                },
-                "bush2": {
-                    "instructions": "Create a function that takes a list and returns it sorted in descending order. Call it with [3, 1, 4, 2].",
-                    "pre_code": "def sort_descending(lst):\n    # Your code here\n    pass\n\nprint(sort_descending([3, 1, 4, 2]))",
-                    "expected_output": "[4, 3, 2, 1]"
-                },
-                "bush3": {
-                    "instructions": "Generate a dictionary of numbers 1-5 with their cubes using dictionary comprehension.",
-                    "pre_code": "cubes_dict = {  }\nprint(cubes_dict)",
-                    "expected_output": "{1: 1, 2: 8, 3: 27, 4: 64, 5: 125}"
-                },
-                "bush4": {
-                    "instructions": "Write a function to find the GCD (greatest common divisor) of two numbers. Call it with 24 and 36.",
-                    "pre_code": "def gcd(a, b):\n    # Your code here\n    pass\n\nprint(gcd(24, 36))",
-                    "expected_output": "12"
-                },
-                "bush5": {
-                    "instructions": "Print the transpose of a 2x2 matrix [[1, 2], [3, 4]].",
-                    "pre_code": "matrix = [[1, 2], [3, 4]]\ntranspose = [  ]\nprint(transpose)",
-                    "expected_output": "[[1, 3], [2, 4]]"
-                }
-            },
-            "level8": {
-                "bush1": {
-                    "instructions": "Write a function to merge two sorted lists into one sorted list. Call it with [1, 3, 5] and [2, 4, 6].",
-                    "pre_code": "def merge_sorted(lst1, lst2):\n    # Your code here\n    pass\n\nprint(merge_sorted([1, 3, 5], [2, 4, 6]))",
-                    "expected_output": "[1, 2, 3, 4, 5, 6]"
-                },
-                "bush2": {
-                    "instructions": "Create a function to check if a string is a valid palindrome ignoring spaces. Call it with 'nurses run'.",
-                    "pre_code": "def is_palindrome_ignore_spaces(s):\n    # Your code here\n    pass\n\nprint(is_palindrome_ignore_spaces('nurses run'))",
-                    "expected_output": "True"
-                },
-                "bush3": {
-                    "instructions": "Write a function that rotates a list by 2 positions to the right. Call it with [1, 2, 3, 4].",
-                    "pre_code": "def rotate_list(lst):\n    # Your code here\n    pass\n\nprint(rotate_list([1, 2, 3, 4]))",
-                    "expected_output": "[3, 4, 1, 2]"
-                },
-                "bush4": {
-                    "instructions": "Generate a list of all prime numbers below 10.",
-                    "pre_code": "primes = [  ]\nprint(primes)",
-                    "expected_output": "[2, 3, 5, 7]"
-                },
-                "bush5": {
-                    "instructions": "Write a function to flatten a nested list. Call it with [[1, 2], [3, 4]].",
-                    "pre_code": "def flatten_list(nested):\n    # Your code here\n    pass\n\nprint(flatten_list([[1, 2], [3, 4]]))",
-                    "expected_output": "[1, 2, 3, 4]"
-                }
-            },
-            "level9": {
-                "bush1": {
-                    "instructions": "Write a function to calculate the power of a number using recursion. Call it with 2 and 3.",
-                    "pre_code": "def power(base, exp):\n    # Your code here\n    pass\n\nprint(power(2, 3))",
-                    "expected_output": "8"
-                },
-                "bush2": {
-                    "instructions": "Generate the first 5 rows of Pascal's Triangle.",
-                    "pre_code": "def generate_pascals_triangle(rows):\n    # Your code here\n    pass\n\nprint(generate_pascals_triangle(5))",
-                    "expected_output": "[[1], [1, 1], [1, 2, 1], [1, 3, 3, 1], [1, 4, 6, 4, 1]]"
-                },
-                "bush3": {
-                    "instructions": "Write a function to calculate the determinant of a 2x2 matrix. Call it with [[1, 2], [3, 4]].",
-                    "pre_code": "def determinant(matrix):\n    # Your code here\n    pass\n\nprint(determinant([[1, 2], [3, 4]]))",
-                    "expected_output": "-2"
-                },
-                "bush4": {
-                    "instructions": "Write a function to find all subsets of a set [1, 2].",
-                    "pre_code": "def find_subsets(s):\n    # Your code here\n    pass\n\nprint(find_subsets([1, 2]))",
-                    "expected_output": "[[], [1], [2], [1, 2]]"
-                },
-                "bush5": {
-                    "instructions": "Create a function to calculate the dot product of two vectors [1, 2, 3] and [4, 5, 6].",
-                    "pre_code": "def dot_product(v1, v2):\n    # Your code here\n    pass\n\nprint(dot_product([1, 2, 3], [4, 5, 6]))",
-                    "expected_output": "32"
-                }
-            },
-            "level10": {
-                "bush1": {
-                    "instructions": "Write a function to solve a quadratic equation ax^2 + bx + c = 0. Call it with a=1, b=-3, c=2.",
-                    "pre_code": "def solve_quadratic(a, b, c):\n    # Your code here\n    pass\n\nprint(solve_quadratic(1, -3, 2))",
-                    "expected_output": "[2.0, 1.0]"
-                },
-                "bush2": {
-                    "instructions": "Write a function to find the shortest path in a graph using Dijkstra's algorithm. Call it with a sample graph.",
-                    "pre_code": "def dijkstra(graph, start):\n    # Your code here\n    pass\n\n# Example graph\nsample_graph = {\n    'A': {'B': 1, 'C': 4},\n    'B': {'A': 1, 'C': 2, 'D': 6},\n    'C': {'A': 4, 'B': 2, 'D': 3},\n    'D': {'B': 6, 'C': 3}\n}\n\nprint(dijkstra(sample_graph, 'A'))",
-                    "expected_output": "{'A': 0, 'B': 1, 'C': 3, 'D': 6}"
-                },
-                "bush3": {
-                    "instructions": "Write a function to evaluate a postfix expression. Call it with '23*54*+'",
-                    "pre_code": "def evaluate_postfix(expression):\n    # Your code here\n    pass\n\nprint(evaluate_postfix('23*54*+'))",
-                    "expected_output": "26"
-                },
-                "bush4": {
-                    "instructions": "Write a function to find the longest increasing subsequence in [10, 9, 2, 5, 3, 7, 101, 18].",
-                    "pre_code": "def longest_increasing_subsequence(lst):\n    # Your code here\n    pass\n\nprint(longest_increasing_subsequence([10, 9, 2, 5, 3, 7, 101, 18]))",
-                    "expected_output": "[2, 3, 7, 101]"
-                },
-                "bush5": {
-                    "instructions": "Write a function to perform matrix multiplication on two matrices [[1, 2], [3, 4]] and [[5, 6], [7, 8]].",
-                    "pre_code": "def matrix_multiply(m1, m2):\n    # Your code here\n    pass\n\nprint(matrix_multiply([[1, 2], [3, 4]], [[5, 6], [7, 8]]))",
-                    "expected_output": "[[19, 22], [43, 50]]"
-                }
-            }
-        }
-     
+    }
+}
