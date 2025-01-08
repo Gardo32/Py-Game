@@ -6,7 +6,8 @@ import sys
 import os
 import json
 from music_manager import MusicManager
-from editor import Editor  # Add this import at the top
+from editor import Editor
+from groq_generator import get_groq_api_key, generate_levels, merge_levels  # Add this import
 
 def draw_borders(stdscr):
     h, w = stdscr.getmaxyx()
@@ -59,6 +60,7 @@ def show_level_select(stdscr):
     
     while True:
         stdscr.clear()
+        h, w = stdscr.getmaxyx()  # Get current dimensions
         menu_text = [
             title,
             "-" * len(title),
@@ -67,24 +69,35 @@ def show_level_select(stdscr):
             footer
         ]
         
-        # Draw menu
-        for idx, text in enumerate(menu_text):
-            x = w//2 - len(text)//2
-            y = h//2 - len(menu_text)//2 + idx
-            if idx < 2:  # Title and separator in different color
-                stdscr.addstr(y, x, text, curses.color_pair(3) | curses.A_BOLD)
-            elif idx == len(menu_text) - 1:  # Footer
-                stdscr.addstr(y, x, text, curses.color_pair(2))
-        
-        # Draw level options
-        base_y = h//2 - len(menu_text)//2 + 2
-        for idx, level in enumerate(levels):
-            x = w//2 - len(f"Level {level}")//2
-            text = f"Level {level}"
-            if idx == selected_idx:
-                stdscr.addstr(base_y + idx, x, text, curses.A_REVERSE | curses.A_BOLD)
-            else:
-                stdscr.addstr(base_y + idx, x, text)
+        try:
+            # Draw menu with boundary checks
+            for idx, text in enumerate(menu_text):
+                x = max(0, min(w-len(text), w//2 - len(text)//2))
+                y = max(0, min(h-1, h//2 - len(menu_text)//2 + idx))
+                if idx < 2:  # Title and separator in different color
+                    stdscr.addstr(y, x, text[:w-x], curses.color_pair(3) | curses.A_BOLD)
+                elif idx == len(menu_text) - 1:  # Footer
+                    stdscr.addstr(y, x, text[:w-x], curses.color_pair(2))
+            
+            # Draw level options with boundary checks
+            base_y = max(0, min(h-1, h//2 - len(menu_text)//2 + 2))
+            visible_levels = min(len(levels), h - base_y - 1)  # Limit number of visible levels
+            
+            # Calculate scroll window if needed
+            start_idx = max(0, selected_idx - visible_levels + 1) if selected_idx >= visible_levels else 0
+            end_idx = min(len(levels), start_idx + visible_levels)
+            
+            for idx, level in enumerate(levels[start_idx:end_idx], start=start_idx):
+                text = f"Level {level}"
+                x = max(0, min(w-len(text), w//2 - len(text)//2))
+                y = max(0, min(h-1, base_y + idx - start_idx))
+                
+                if idx == selected_idx:
+                    stdscr.addstr(y, x, text[:w-x], curses.A_REVERSE | curses.A_BOLD)
+                else:
+                    stdscr.addstr(y, x, text[:w-x])
+        except curses.error:
+            pass  # Ignore any remaining drawing errors
         
         stdscr.refresh()
         
@@ -108,6 +121,8 @@ def show_menu(stdscr, music_manager):
         "Use `F` to Break Bushes",
         f"Press 'M' to {('Disable' if music_manager.enabled else 'Enable')} Music",
         "Press 'S' to Start",
+        "Press 'A' for AI Level Generator",  # Add new menu option
+        "Press 'D' to Delete AI Levels",  # Add new menu option
         "Press 'Q' to Quit"
     ]
     
@@ -126,8 +141,12 @@ def show_menu(stdscr, music_manager):
         elif key in [ord('m'), ord('M')]:
             music_manager.toggle_music()
             return 'REFRESH_MENU'
+        elif key in [ord('a'), ord('A')]:  # Add AI menu handler
+            return 'GENERATE_LEVELS'
+        elif key in [ord('d'), ord('D')]:  # Add new handler
+            return 'DELETE_AI_LEVELS'
         elif key == 16:  # Ctrl+P
-            return 'REMOVE_BUSHES'  # Changed from 'SECRET_CREDITS'
+            return 'REMOVE_BUSHES'
         elif key == 17:  # Ctrl+Q
             return 'LEVEL_SELECT'
 
@@ -337,6 +356,65 @@ def get_player_name(stdscr):
     curses.curs_set(0)
     return name.strip()
 
+def get_num_levels(stdscr):
+    """Get number of additional levels to generate from user."""
+    stdscr.clear()
+    h, w = stdscr.getmaxyx()
+    prompt = "Enter number of additional levels to generate: "
+    stdscr.addstr(h//2, w//2 - len(prompt)//2, prompt)
+    curses.echo()
+    curses.curs_set(1)
+    num = ""
+    
+    while True:
+        try:
+            y = h//2
+            x = w//2 - len(prompt)//2 + len(prompt)
+            stdscr.addstr(y, x, " " * 20)  # Clear previous input
+            stdscr.addstr(y, x, num)
+            char = stdscr.getch()
+            if char == ord('\n'):
+                break
+            elif char == ord('\b') or char == 127:  # Backspace
+                num = num[:-1]
+            elif chr(char).isdigit() and len(num) < 3:  # Only allow numbers
+                num += chr(char)
+        except curses.error:
+            pass
+    
+    curses.noecho()
+    curses.curs_set(0)
+    return int(num) if num else 0
+
+def delete_ai_levels(stdscr):
+    """Delete all AI-generated levels (levels > 10) from question store."""
+    try:
+        with open('question_store.json', 'r') as f:
+            questions = json.load(f)
+        
+        # Keep only levels 1-10
+        original_levels = {k: v for k, v in questions.items() if k.startswith('level') and int(k[5:]) <= 10}
+        
+        # Save the filtered questions back to the file
+        with open('question_store.json', 'w') as f:
+            json.dump(original_levels, f, indent=4)
+        
+        # Show success message
+        stdscr.clear()
+        h, w = stdscr.getmaxyx()
+        msg = "AI-generated levels deleted successfully!"
+        stdscr.addstr(h//2, w//2 - len(msg)//2, msg)
+        stdscr.refresh()
+        stdscr.getch()
+    except Exception as e:
+        # Show error message
+        stdscr.clear()
+        h, w = stdscr.getmaxyx()
+        msg = f"Error deleting levels: {str(e)}"
+        stdscr.addstr(h//2, w//2 - len(msg)//2, msg)
+        stdscr.refresh()
+        stdscr.getch()
+
 def main(stdscr):
     # Create required music directories if they don't exist
     for dir in ["music", "music/battle", "music/battle_mp3"]:
@@ -400,6 +478,36 @@ def main(stdscr):
                                 player_name = "Player"
                         current_level = selected_level
                         game_state = 'PLAYING'
+                    continue
+                elif action == 'GENERATE_LEVELS':
+                    api_key = get_groq_api_key(stdscr)
+                    if api_key:
+                        num_levels = get_num_levels(stdscr)
+                        if num_levels > 0:
+                            try:
+                                new_levels = generate_levels(api_key, num_levels)
+                                if new_levels:
+                                    # Load existing questions
+                                    with open('question_store.json', 'r') as f:
+                                        existing_questions = json.load(f)
+                                    # Merge and save
+                                    merged = merge_levels(existing_questions, new_levels)
+                                    with open('question_store.json', 'w') as f:
+                                        json.dump(merged, f, indent=4)
+                                    stdscr.clear()
+                                    height, width = stdscr.getmaxyx()  # Get screen dimensions
+                                    stdscr.addstr(height//2, width//2 - 15, "Levels generated successfully!")
+                                    stdscr.refresh()
+                                    stdscr.getch()
+                            except Exception as e:
+                                stdscr.clear()
+                                height, width = stdscr.getmaxyx()  # Get screen dimensions
+                                stdscr.addstr(height//2, width//2 - 15, f"Error: {str(e)}")
+                                stdscr.refresh()
+                                stdscr.getch()
+                    continue
+                elif action == 'DELETE_AI_LEVELS':
+                    delete_ai_levels(stdscr)
                     continue
             
             if game_state == 'PLAYING':
