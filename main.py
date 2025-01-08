@@ -112,38 +112,107 @@ def show_level_select(stdscr):
         elif key == 10:  # Enter
             return levels[selected_idx]
 
-def show_menu(stdscr, music_manager):
+def draw_fancy_border(stdscr, start_y, start_x, height, width, color_pair):
+    """Draw a fancy border with custom characters."""
+    # Border characters
+    top_left = "╔"
+    top_right = "╗"
+    bottom_left = "╚"
+    bottom_right = "╝"
+    horizontal = "═"
+    vertical = "║"
+    
+    try:
+        # Draw corners
+        stdscr.addstr(start_y, start_x, top_left, color_pair)
+        stdscr.addstr(start_y, start_x + width - 1, top_right, color_pair)
+        stdscr.addstr(start_y + height - 1, start_x, bottom_left, color_pair)
+        stdscr.addstr(start_y + height - 1, start_x + width - 1, bottom_right, color_pair)
+        
+        # Draw horizontal borders
+        for x in range(start_x + 1, start_x + width - 1):
+            stdscr.addstr(start_y, x, horizontal, color_pair)
+            stdscr.addstr(start_y + height - 1, x, horizontal, color_pair)
+        
+        # Draw vertical borders
+        for y in range(start_y + 1, start_y + height - 1):
+            stdscr.addstr(y, start_x, vertical, color_pair)
+            stdscr.addstr(y, start_x + width - 1, vertical, color_pair)
+    except curses.error:
+        pass
+
+def show_menu(stdscr, music_manager, has_active_game=False):
     stdscr.clear()
     h, w = stdscr.getmaxyx()
+    
+    # Title text
+    title = " Py-dex "
+    subtitle = "« A Python Learning Adventure »"
+    
+    # Menu options
     menu_text = [
-        "Welcome to the Game!",
-        "Use WASD or Arrow Keys to move",
-        "Use `F` to Break Bushes",
-        f"Press 'M' to {('Disable' if music_manager.enabled else 'Enable')} Music",
-        "Press 'S' to Start",
-        "Press 'A' for AI Level Generator",  # Add new menu option
-        "Press 'D' to Delete AI Levels",  # Add new menu option
-        "Press 'Q' to Quit"
+        "⚡ [S] " + ("Continue" if has_active_game else "Start New Game"),
+        " ♫ [M] " + ("Disable" if music_manager.enabled else "Enable") + " Music",
+        "🤖 [A] AI Level Generator",
+        "❌ [D] Delete AI Levels",
+        "⚔  [R] Restart" if has_active_game else None,
+        "✖  [Q] Quit"
     ]
     
-    for idx, text in enumerate(menu_text):
-        x = w//2 - len(text)//2
-        y = h//2 - 2 + idx
-        stdscr.addstr(y, x, text, curses.color_pair(8))  # Use black text
+    # Filter out None entries
+    menu_text = [text for text in menu_text if text is not None]
+    
+    # Calculate dimensions for menu box
+    menu_width = max(max(len(text) for text in menu_text) + 4, len(subtitle) + 4)
+    menu_height = len(menu_text) + 4  # Extra space for borders and padding
+    
+    # Calculate starting position to center the menu
+    start_y = (h - menu_height) // 2
+    start_x = (w - menu_width) // 2
+    
+    try:
+        # Draw outer fancy border
+        draw_fancy_border(stdscr, start_y - 2, start_x - 2, menu_height + 4, menu_width + 4, 
+                         curses.color_pair(6) | curses.A_BOLD)
+        
+        # Draw inner fancy border
+        draw_fancy_border(stdscr, start_y, start_x, menu_height, menu_width, 
+                         curses.color_pair(3) | curses.A_BOLD)
+        
+        # Draw title
+        title_x = start_x + (menu_width - len(title)) // 2
+        stdscr.addstr(start_y - 1, title_x, title, curses.color_pair(8) | curses.A_BOLD)
+        
+        # Draw subtitle
+        subtitle_x = start_x + (menu_width - len(subtitle)) // 2
+        stdscr.addstr(start_y + 1, subtitle_x, subtitle, curses.color_pair(5) | curses.A_BOLD)
+        
+        # Draw menu options
+        for idx, text in enumerate(menu_text):
+            y = start_y + idx + 3
+            x = start_x + 2
+            stdscr.addstr(y, x, text, curses.color_pair(8))
+    
+    except curses.error:
+        pass
     
     stdscr.refresh()
+    
+    # Handle input
     while True:
         key = stdscr.getch()
         if key in [ord('q'), ord('Q')]:
             return 'QUIT'
         elif key in [ord('s'), ord('S')]:
-            return 'START'
+            return 'CONTINUE' if has_active_game else 'START'
+        elif key in [ord('r'), ord('R')] and has_active_game:
+            return 'RESTART'
         elif key in [ord('m'), ord('M')]:
             music_manager.toggle_music()
             return 'REFRESH_MENU'
-        elif key in [ord('a'), ord('A')]:  # Add AI menu handler
+        elif key in [ord('a'), ord('A')]:
             return 'GENERATE_LEVELS'
-        elif key in [ord('d'), ord('D')]:  # Add new handler
+        elif key in [ord('d'), ord('D')]:
             return 'DELETE_AI_LEVELS'
         elif key == 16:  # Ctrl+P
             return 'REMOVE_BUSHES'
@@ -452,7 +521,7 @@ def main(stdscr):
     try:
         while True:
             if game_state == 'MENU':
-                action = show_menu(stdscr, music_manager)
+                action = show_menu(stdscr, music_manager, level is not None)  # Pass whether there's an active game
                 if action == 'REFRESH_MENU':
                     continue
                 elif action == 'QUIT':
@@ -464,6 +533,13 @@ def main(stdscr):
                     current_level = 1
                     game_state = 'PLAYING'
                     music_manager.start_main_music()
+                    continue
+                elif action == 'CONTINUE':  # New action
+                    game_state = 'PLAYING'
+                    continue
+                elif action == 'RESTART':  # New action
+                    current_level = 1
+                    game_state = 'PLAYING'
                     continue
                 elif action == 'REMOVE_BUSHES':
                     if level:  # If level exists, remove all blocking bushes

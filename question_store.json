@@ -268,5 +268,59 @@
             "pre_code": "def is_even(n):\n    # Your code here\n    pass\n\nprint(is_even(6))",
             "expected_output": "True"
         }
+    },
+    "level11": {
+        "bush1": {
+            "instructions": "Write a Python function that takes a list of numbers as input and returns the largest number in the list.",
+            "pre_code": "def find_largest(numbers):\n    # your code here\n",
+            "expected_output": "find_largest([1, 5, 8, 3, 9]) should return 9"
+        },
+        "bush2": {
+            "instructions": "Write a Python function that takes a string as input and returns the string with all vowels removed.",
+            "pre_code": "def remove_vowels(word):\n    # your code here\n",
+            "expected_output": "remove_vowels('hello') should return 'hll'"
+        },
+        "bush3": {
+            "instructions": "Write a Python function that takes two lists of numbers as input and returns a new list that contains the elements that are common to both lists.",
+            "pre_code": "def common_elements(list1, list2):\n    # your code here\n",
+            "expected_output": "common_elements([1, 2, 3, 4, 5], [3, 4, 5, 6, 7]) should return [3, 4, 5]"
+        },
+        "bush4": {
+            "instructions": "Write a Python function that takes a list of strings as input and returns a new list that contains the strings in reverse order.",
+            "pre_code": "def reverse_list(strings):\n    # your code here\n",
+            "expected_output": "reverse_list(['apple', 'banana', 'cherry']) should return ['cherry', 'banana', 'apple']"
+        },
+        "bush5": {
+            "instructions": "Write a Python function that takes a dictionary as input and returns a new dictionary with the keys and values swapped.",
+            "pre_code": "def swap_keys_values(dictionary):\n    # your code here\n",
+            "expected_output": "swap_keys_values({'a': 1, 'b': 2, 'c': 3}) should return {1: 'a', 2: 'b', 3: 'c'}"
+        }
+    },
+    "level12": {
+        "bush1": {
+            "instructions": "Write a Python function that takes a list of numbers as input and returns the second largest number in the list. If the list has less than two elements, the function should return None.",
+            "pre_code": "def second_largest(numbers):\n    # your code here\n",
+            "expected_output": "second_largest([1, 5, 8, 3, 9]) should return 8"
+        },
+        "bush2": {
+            "instructions": "Write a Python function that takes a list of strings as input and returns the longest string in the list. If there are multiple strings of the same longest length, the function should return the first one.",
+            "pre_code": "def longest_string(strings):\n    # your code here\n",
+            "expected_output": "longest_string(['apple', 'banana', 'cherry', 'blueberry']) should return 'blueberry'"
+        },
+        "bush3": {
+            "instructions": "Write a Python function that takes a string as input and returns a new string with the words in the original string reversed. For example, the function should turn 'hello world' into 'world hello'.",
+            "pre_code": "def reverse_words(sentence):\n    # your code here\n",
+            "expected_output": "reverse_words('hello world') should return 'world hello'"
+        },
+        "bush4": {
+            "instructions": "Write a Python function that takes a list of numbers as input and returns a new list with the elements in reverse order. The function should handle both lists of numbers and lists of negative numbers correctly.",
+            "pre_code": "def reverse_list_of_numbers(numbers):\n    # your code here\n",
+            "expected_output": "reverse_list_of_numbers([1, 2, 3]) should return [3, 2, 1]; reverse_list_of_numbers([-1, -2, -3]) should return [-3, -2, -1]"
+        },
+        "bush5": {
+            "instructions": "Write a Python function that takes a list of dictionaries as input and returns a new list with the dictionaries sorted by the value of a specified key. For example, if the input list is [{'name': 'Alice', 'age': 25}, {'name': 'Bob', 'age': 20}, {'name': 'Charlie', 'age': 22}], the function should return [{'name': 'Bob', 'age': 20}, {'name': 'Charlie', 'age': 22}, {'name': 'Alice', 'age': 25}] when the key is 'age'.",
+            "pre_code": "def sort_dicts_by_key(dicts, key):\n    # your code here\n",
+            "expected_output": "sort_dicts_by_key([{'name': 'Alice', 'age': 25}, {'name': 'Bob', 'age': 20}, {'name': 'Charlie', 'age': 22}], 'age') should return [{'name': 'Bob', 'age': 20}, {'name': 'Charlie', 'age': 22}, {'name': 'Alice', 'age': 25}]"
+        }
     }
 }
