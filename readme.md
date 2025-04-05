@@ -1,9 +1,26 @@
 # Py-dex: A Python CLI Learning Adventure 🎮
 
+[![Py-dex Demo Video](https://img.shields.io/badge/Watch%20Demo-YouTube-red?logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=1PB_8IISfD4)
+
 A terminal-based educational game that teaches Python programming through an interactive RPG-style experience. Players navigate through levels, solve coding challenges, and learn Python concepts in an engaging way.
 
-## 🌟 Features
+![Python](https://img.shields.io/badge/Python-3.7+-blue?logo=python&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
 
+## 📝 Table of Contents
+- [Features](#-features)
+- [Educational Content](#-educational-content)
+- [Requirements](#-requirements)
+- [Installation](#-installation)
+- [How to Play](#-how-to-play)
+- [Advanced Features](#-advanced-features)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Credits](#-credits)
+- [Updates & Maintenance](#-updates--maintenance)
+
+## 🌟 Features
 - Interactive terminal-based gameplay with colorful UI
 - Multiple levels with increasing difficulty
 - Built-in code editor with syntax highlighting
@@ -15,7 +32,6 @@ A terminal-based educational game that teaches Python programming through an int
 - Cheat codes for testing (Ctrl+P)
 
 ## 🎯 Educational Content
-
 The game covers Python programming concepts including:
 - Variables and data types
 - Basic operations
@@ -25,8 +41,7 @@ The game covers Python programming concepts including:
 - And more advanced topics in higher levels
 
 ## 🔧 Requirements
-
-```sh
+```
 python 3.7+
 pygame==2.6.1
 pydub==0.25.1
@@ -35,56 +50,49 @@ curses (built-in with Python on Unix systems)
 ```
 
 ## 📦 Installation
-
 1. Clone the repository:
-```sh
-git clone https://github.com/Gardo32/py-dex.git
-cd py-dex
-```
+   ```bash
+   git clone https://github.com/Gardo32/py-dex.git
+   cd py-dex
+   ```
 
 2. Install dependencies:
-```sh
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 3. Create required music directories:
-```sh
-mkdir -p music/battle_mp3
-```
+   ```bash
+   mkdir -p music/battle_mp3
+   ```
 
 4. (Optional) Add background music:
-- Place main theme MP3 in 
-
-music
-
- folder as "Chill & Relaxing Pokémon Music Mix.mp3"
-- Place battle music MP3s in 
-
-battle_mp3
-
- folder
+   - Place main theme MP3 in music folder as "Chill & Relaxing Pokémon Music Mix.mp3"
+   - Place battle music MP3s in battle_mp3 folder
 
 ## 🎮 How to Play
-
 1. Start the game:
-```sh
-python main.py
-```
+   ```bash
+   python main.py
+   ```
 
 2. Game Controls:
-- Movement: Arrow keys or WASD
-- Interact/Break bush: F
-- Quit: Q
-- Restart: R
-- Menu navigation: Arrow keys + Enter
-- Code editor: Standard text editing + Ctrl+X to save/run
+   | Action | Key |
+   |--------|-----|
+   | Movement | Arrow keys or WASD |
+   | Interact/Break bush | F |
+   | Quit | Q |
+   | Restart | R |
+   | Toggle Music | M |
+   | Level Select | Ctrl+Q |
+   | Cheat Menu | Ctrl+P |
 
 3. Gameplay:
-- Navigate through the maze-like levels
-- Encounter numbered bushes (1-5) containing coding challenges
-- Press F near a bush to open the code editor
-- Complete the Python challenge to break the bush
-- Reach the level exit (marked with special characters) to progress
+   - Navigate through the maze-like levels
+   - Encounter numbered bushes (1-5) containing coding challenges
+   - Press F near a bush to open the code editor
+   - Complete the Python challenge to break the bush
+   - Reach the level exit (marked with special characters) to progress
 
 ## 🛠️ Advanced Features
 
@@ -121,7 +129,6 @@ python main.py
    - Check terminal encoding settings
 
 ## 🤝 Contributing
-
 1. Fork the repository
 2. Create your feature branch: `git checkout -b feature/AmazingFeature`
 3. Commit your changes: `git commit -m 'Add some AmazingFeature'`
@@ -129,17 +136,19 @@ python main.py
 5. Open a Pull Request
 
 ## 📝 License
-
 This project is open source and available under the MIT License.
 
 ## 👏 Credits
-
 - Developer: [Gardo32](https://github.com/Gardo32)
 - Music: Add music credits here
 - Special thanks to the Python community
 
 ## 🔄 Updates & Maintenance
-
 - Check the repository for latest updates
 - Bug reports and feature requests welcome in Issues
 - Follow the project for notifications about new releases
+
+## 🎥 Demo Video
+Check out the gameplay demo:
+
+[![Py-dex Demo](https://img.youtube.com/vi/1PB_8IISfD4/0.jpg)](https://www.youtube.com/watch?v=1PB_8IISfD4)
